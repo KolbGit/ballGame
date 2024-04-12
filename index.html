@@ -1,0 +1,62 @@
+<body>
+    <style>
+        body{
+            margin: 0;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.js"></script>
+    <script>
+        class GameScene extends Phaser.Scene {
+            preload() {
+                this.load.image('sky', 'assets/sky.png');
+                for (let i = 1; i <= 5; i++) {
+                    this.load.image('ball' + i, 'assets/ball' + i + '.png');
+                }
+            }
+            create() {
+                this.add.image(400, 300, 'sky');
+
+                this.balls = this.physics.add.group();
+
+                for (let i = 1; i <= 5; i++) {
+                    const ball = this.balls.create(
+                        Phaser.Math.Between(50, config.width - 50),
+                        Phaser.Math.Between(50, config.height - 50),
+                        'ball' + i
+                    );
+                    this.balls.add(ball);
+    
+                    ball.setVelocity(Phaser.Math.Between(-200, 200), Phaser.Math.Between(-200, 200));
+                    ball.setBounce(1);
+                    ball.setCollideWorldBounds(true);
+                    ball.setCircle(14);
+                    const scale = Phaser.Math.FloatBetween(0.3, 0.7);
+                    ball.setScale(scale);
+                }
+
+                this.physics.world.setBoundsCollision(true, true, true, true);
+            }
+            update() {
+                this.physics.world.collide(this.balls);
+            }
+        }
+
+        let config = {
+            type: Phaser.AUTO,
+            width: 800,
+            height: 600,
+            scene: new GameScene(),
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: {
+                        y: 0
+                    },
+                    debug: true // Включаем отображение столкновений для отладки
+                }
+            }
+        };
+        let game = new Phaser.Game(config);
+    </script>
+</body>
